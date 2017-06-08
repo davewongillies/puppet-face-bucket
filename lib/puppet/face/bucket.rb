@@ -109,7 +109,10 @@ class BucketFile
   end
 
   def match_contents(args)
-    matches = contents.scan(/^.*#{args[:match]}.*$/)
+    # Force encoding to ISO-8859-1 to forcefully handle weird UTF-8 characters
+    # that makes scan choke on this error:
+    # invalid byte sequence in UTF-8
+    matches = contents.force_encoding("ISO-8859-1").encode("utf-8", replace: nil).scan(/^.*#{args[:match]}.*$/)
     matches.join("\n\t").chomp unless matches.empty?
   end
 
